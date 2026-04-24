@@ -114,3 +114,7 @@ Company
 ## Development
 
 Run both servers concurrently in separate terminals. The Angular dev server proxies API calls to the .NET backend via CORS (allowed origin: `http://localhost:4200`).
+
+## Team
+
+Alvin is scrum master.
