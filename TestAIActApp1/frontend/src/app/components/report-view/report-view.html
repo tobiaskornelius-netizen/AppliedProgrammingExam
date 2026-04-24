@@ -1,0 +1,238 @@
+<div class="p-8 max-w-5xl mx-auto">
+
+<!-- Page header -->
+<div class="flex items-center gap-3 mb-7">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Compliance Report</h1>
+    <p class="text-sm text-gray-500 mt-0.5">EU AI Act governance overview and risk assessment</p>
+  </div>
+</div>
+
+@if (error) {
+  <div class="mb-6 flex items-start gap-3 p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm">
+    <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    {{ error }}
+  </div>
+}
+
+@if (report) {
+
+  <!-- ── Risk Score Hero Card ── -->
+  <div class="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden mb-6">
+    <div class="px-8 py-6" style="background:linear-gradient(135deg,#005C40 0%,#007A50 100%);">
+      <p class="text-sm font-medium mb-1" style="color:rgba(255,255,255,0.65);">{{ report.companyName }}</p>
+      <div class="flex items-end gap-6 flex-wrap">
+        <div>
+          <div class="flex items-baseline gap-3">
+            <span class="text-5xl font-bold text-white">{{ report.riskScore }}</span>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold" [ngClass]="riskHeaderClass">
+              {{ riskLabel }}
+            </span>
+          </div>
+          <p class="text-sm mt-1" style="color:rgba(255,255,255,0.6);">Overall compliance risk score</p>
+        </div>
+        <!-- Risk interval legend -->
+        <div class="flex items-center gap-3 flex-wrap ml-auto">
+          <div class="flex items-center gap-1.5 text-xs" style="color:rgba(255,255,255,0.7);">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-500 text-white">0 – 5</span>
+            Low Risk
+          </div>
+          <div class="flex items-center gap-1.5 text-xs" style="color:rgba(255,255,255,0.7);">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-500 text-white">6 – 15</span>
+            Medium Risk
+          </div>
+          <div class="flex items-center gap-1.5 text-xs" style="color:rgba(255,255,255,0.7);">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-600 text-white">16+</span>
+            High Risk
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Scoring breakdown toggle -->
+    <div class="px-8 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+      <span class="text-xs text-gray-500">Score is the sum of all risk factors across registered AI tools</span>
+      <button (click)="showScoring = !showScoring"
+              class="text-xs font-medium transition-colors duration-150"
+              style="color:#005C40;" onmouseover="this.style.color='#00A859'" onmouseout="this.style.color='#005C40'">
+        {{ showScoring ? '▲ Hide' : '▼ Show' }} scoring breakdown
+      </button>
+    </div>
+    @if (showScoring) {
+      <div class="px-8 py-5 border-t border-gray-100">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-100">
+              <th class="pb-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Risk Condition</th>
+              <th class="pb-2.5 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">Points</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <tr><td class="py-2 text-gray-700">Risk level: Unacceptable</td><td class="py-2 text-right font-semibold text-red-600">+5</td></tr>
+            <tr><td class="py-2 text-gray-700">Risk level: High</td><td class="py-2 text-right font-semibold text-yellow-600">+3</td></tr>
+            <tr><td class="py-2 text-gray-700">Risk level: Limited</td><td class="py-2 text-right font-semibold text-blue-600">+1</td></tr>
+            <tr><td class="py-2 text-gray-700">Risk level: Low</td><td class="py-2 text-right font-semibold text-green-600">+0</td></tr>
+            <tr><td class="py-2 text-gray-700">Processes personal data</td><td class="py-2 text-right font-semibold text-gray-700">+2</td></tr>
+            <tr><td class="py-2 text-gray-700">No oversight owner assigned</td><td class="py-2 text-right font-semibold text-gray-700">+2</td></tr>
+            <tr><td class="py-2 text-gray-700">Transparency status: Pending</td><td class="py-2 text-right font-semibold text-gray-700">+2</td></tr>
+            <tr><td class="py-2 text-gray-700">No audit in the last 90 days</td><td class="py-2 text-right font-semibold text-gray-700">+2</td></tr>
+          </tbody>
+        </table>
+        <p class="text-xs text-gray-400 mt-3">Each condition applies per tool. Score is summed across all AI tools for this company.</p>
+      </div>
+    }
+  </div>
+
+  <!-- ── KPI Metric Cards ── -->
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Total Tools</span>
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background-color:#E6F4EE;">
+          <svg class="w-4 h-4" style="color:#005C40;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5"/>
+          </svg>
+        </div>
+      </div>
+      <div class="text-3xl font-bold" style="color:#005C40;">{{ report.totalTools }}</div>
+      <p class="text-xs text-gray-400 mt-1">AI systems registered under this company</p>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">High / Unacceptable</span>
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50">
+          <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="text-3xl font-bold" [class]="report.highRiskCount > 0 ? 'text-red-600' : 'text-gray-400'">{{ report.highRiskCount }}</div>
+      <p class="text-xs text-gray-400 mt-1">Require mandatory conformity assessments before deployment</p>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Personal Data</span>
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-yellow-50">
+          <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="text-3xl font-bold" [class]="report.personalDataCount > 0 ? 'text-yellow-600' : 'text-gray-400'">{{ report.personalDataCount }}</div>
+      <p class="text-xs text-gray-400 mt-1">Joint GDPR + EU AI Act obligations — DPIA may be required</p>
+    </div>
+  </div>
+
+  @if (dashboard) {
+
+    <!-- ── Risk Distribution ── -->
+    <div class="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden mb-6">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+        <h2 class="text-sm font-semibold text-gray-700">Risk Level Distribution</h2>
+        <span class="info-tip tip-down" data-tip="Breakdown of all registered AI tools by their EU AI Act risk level, automatically calculated via the Q1–Q3 Algorithmic Risk Assessment. Unacceptable-risk tools are prohibited from deployment.">i</span>
+        <span class="ml-auto text-xs text-gray-400">{{ dashboard.totalTools }} tools total</span>
+      </div>
+      <div class="p-6 grid grid-cols-4 gap-4">
+        @for (level of riskLevels; track level) {
+          <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 border border-gray-100">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" [ngClass]="riskLevelBadgeClass(level)">
+              {{ level }}
+            </span>
+            <span class="text-3xl font-bold text-gray-800">{{ dashboard.riskLevelCounts[level] || 0 }}</span>
+            <span class="text-xs text-gray-400">tool{{ (dashboard.riskLevelCounts[level] || 0) !== 1 ? 's' : '' }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ── Warning Cards ── -->
+    <div class="grid grid-cols-2 gap-5">
+
+      <!-- Transparency Warning -->
+      <div class="bg-white rounded-xl shadow-card border overflow-hidden"
+           [class]="dashboard.pendingTransparencyTools.length > 0 ? 'border-red-200' : 'border-gray-100'">
+        <div class="px-5 py-4 border-b flex items-center gap-2"
+             [class]="dashboard.pendingTransparencyTools.length > 0 ? 'border-red-100 bg-red-50' : 'border-gray-100 bg-gray-50'">
+          <svg class="w-4 h-4 flex-shrink-0" [class]="dashboard.pendingTransparencyTools.length > 0 ? 'text-red-500' : 'text-green-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <h3 class="text-sm font-semibold" [class]="dashboard.pendingTransparencyTools.length > 0 ? 'text-red-700' : 'text-gray-700'">
+            Article 50 – Pending Transparency
+          </h3>
+          <span class="info-tip tip-down" data-tip="Article 50 of the EU AI Act requires operators to clearly inform users they are interacting with AI. 'Pending' tools have identified this obligation but have not yet implemented the required disclosures. Each adds +2 to the risk score.">i</span>
+        </div>
+        <div class="p-5">
+          @if (dashboard.pendingTransparencyTools.length === 0) {
+            <div class="flex items-center gap-2 text-green-700 text-sm">
+              <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              All tools have met their transparency obligations.
+            </div>
+          } @else {
+            <p class="text-xs text-gray-500 mb-3">These tools have unfulfilled Article 50 disclosure requirements. Update their status to "Implemented" in the tool list once disclosures are in place.</p>
+            <ul class="space-y-1.5">
+              @for (name of dashboard.pendingTransparencyTools; track name) {
+                <li class="flex items-center gap-2 text-sm">
+                  <span class="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
+                  <span class="text-gray-800 font-medium">{{ name }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <!-- Audit Warning -->
+      <div class="bg-white rounded-xl shadow-card border overflow-hidden"
+           [class]="dashboard.auditNeglectTools.length > 0 ? 'border-yellow-200' : 'border-gray-100'">
+        <div class="px-5 py-4 border-b flex items-center gap-2"
+             [class]="dashboard.auditNeglectTools.length > 0 ? 'border-yellow-100 bg-yellow-50' : 'border-gray-100 bg-gray-50'">
+          <svg class="w-4 h-4 flex-shrink-0" [class]="dashboard.auditNeglectTools.length > 0 ? 'text-yellow-600' : 'text-green-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <h3 class="text-sm font-semibold" [class]="dashboard.auditNeglectTools.length > 0 ? 'text-yellow-800' : 'text-gray-700'">
+            Human Oversight – Audit Overdue
+          </h3>
+          <span class="info-tip tip-down tip-left" data-tip="Article 9 of the EU AI Act requires ongoing risk management including regular human oversight audits. Tools not audited in 90+ days each add +2 to the risk score. Use 'Log Audit' in the tool list to record an audit.">i</span>
+        </div>
+        <div class="p-5">
+          @if (dashboard.auditNeglectTools.length === 0) {
+            <div class="flex items-center gap-2 text-green-700 text-sm">
+              <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              All tools have been audited within the last 90 days.
+            </div>
+          } @else {
+            <p class="text-xs text-gray-500 mb-3">These tools are overdue for a human oversight audit. Navigate to the tool list and click "Log Audit" after reviewing each system.</p>
+            <ul class="space-y-1.5">
+              @for (name of dashboard.auditNeglectTools; track name) {
+                <li class="flex items-center gap-2 text-sm">
+                  <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 flex-shrink-0"></span>
+                  <span class="text-gray-800 font-medium">{{ name }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+    </div>
+  }
+
+} @else if (!error) {
+  <div class="flex flex-col items-center justify-center py-24 text-gray-400">
+    <svg class="w-10 h-10 animate-spin mb-4 text-gray-200" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+    </svg>
+    Loading compliance report...
+  </div>
+}
+
+</div>

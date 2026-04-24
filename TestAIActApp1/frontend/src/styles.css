@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS-only info tooltips ─────────────────────────────────────────────── */
+.info-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 700;
+  color: #00A859;
+  border: 1.5px solid #00A859;
+  border-radius: 50%;
+  cursor: help;
+  position: relative;
+  margin-left: 5px;
+  vertical-align: middle;
+  flex-shrink: 0;
+  user-select: none;
+  line-height: 1;
+}
+
+.info-tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: #f9fafb;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  width: 270px;
+  white-space: normal;
+  text-align: left;
+  font-weight: 400;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 9999;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.info-tip.tip-right::after {
+  left: 0;
+  transform: translateX(0);
+}
+
+/* Tooltip appears BELOW the icon — use inside overflow:hidden containers (table/card headers) */
+.info-tip.tip-down::after {
+  bottom: auto;
+  top: calc(100% + 8px);
+}
+
+/* Tooltip right-aligned to icon — use for icons near the right edge of the screen */
+.info-tip.tip-left::after {
+  left: auto;
+  right: 0;
+  transform: translateX(0);
+}
+
+.info-tip:hover::after {
+  opacity: 1;
+}
+
+/* ─── Risk score interval legend ─────────────────────────────────────────── */
+.risk-legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+.risk-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* ─── Table row hover with BCG light green ─────────────────────────────── */
+.bcg-table tbody tr:hover {
+  background-color: #E6F4EE;
+}
+
+/* ─── Angular form validation shim (replaces Bootstrap .is-invalid) ─────── */
+.field-invalid {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* ─── Scrollbar styling for sidebar ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 999px; }

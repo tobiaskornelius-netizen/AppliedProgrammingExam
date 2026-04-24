@@ -1,0 +1,21 @@
+<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+  <div class="w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-sm p-10 text-center">
+
+    <div class="inline-flex items-center gap-2 mb-6">
+      <div class="w-9 h-9 rounded-lg bg-[#005C40] flex items-center justify-center text-white font-bold text-sm">AI</div>
+      <span class="text-sm font-semibold text-[#005C40]">AI Act Compliance</span>
+    </div>
+
+    <h1 class="text-xl font-bold text-gray-900 mb-2">User View</h1>
+    <p class="text-sm text-gray-500 mb-6">
+      This view is for employees completing an anonymous survey.<br/>
+      Ask your administrator for a survey link.
+    </p>
+
+    <button
+      (click)="switchToAdmin()"
+      class="w-full py-2.5 border border-[#005C40] text-[#005C40] text-sm font-medium rounded-xl hover:bg-[#E6F4EE] transition-colors">
+      Switch to Admin View
+    </button>
+  </div>
+</div>

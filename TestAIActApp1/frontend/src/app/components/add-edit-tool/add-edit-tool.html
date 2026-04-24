@@ -1,0 +1,228 @@
+<div class="p-8 max-w-2xl mx-auto">
+
+<!-- Page header -->
+<div class="flex items-center gap-3 mb-7">
+  <button (click)="goBack()"
+          class="p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-white border border-gray-200 shadow-sm transition-all duration-150">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
+  </button>
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ isEdit ? 'Edit AI Tool' : 'Add AI Tool' }}</h1>
+    <p class="text-sm text-gray-500 mt-0.5">{{ isEdit ? 'Update tool details and oversight information' : 'Register a new AI system and complete the algorithmic risk assessment' }}</p>
+  </div>
+</div>
+
+  @if (error) {
+    <div class="mb-5 flex items-start gap-3 p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm">
+      <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      {{ error }}
+    </div>
+  }
+
+  <form #f="ngForm" (ngSubmit)="submit()" class="space-y-5">
+
+    <!-- ── Tool Details Card ── -->
+    <div class="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100" style="background:linear-gradient(135deg,#005C40 0%,#007A50 100%);">
+        <h2 class="text-sm font-semibold text-white">Tool Details</h2>
+        <p class="text-xs mt-0.5" style="color:rgba(255,255,255,0.65);">Basic information about the AI system</p>
+      </div>
+      <div class="p-6 space-y-5">
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tool Name</label>
+            <input type="text"
+              [(ngModel)]="tool.name" name="name" required #name="ngModel"
+              placeholder="e.g. FraudShield"
+              class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-900 outline-none transition-all duration-150"
+              [class]="name.invalid && name.touched ? 'border-red-400 bg-red-50 ring-2 ring-red-200' : 'border-gray-200 bg-gray-50 focus:bg-white focus:border-bcg-green focus:ring-2 focus:ring-bcg-light'"
+            />
+            @if (name.invalid && name.touched) {
+              <p class="mt-1.5 text-xs text-red-600">Name is required.</p>
+            }
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Vendor</label>
+            <input type="text"
+              [(ngModel)]="tool.vendor" name="vendor" required #vendor="ngModel"
+              placeholder="e.g. IBM, Microsoft"
+              class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-900 outline-none transition-all duration-150"
+              [class]="vendor.invalid && vendor.touched ? 'border-red-400 bg-red-50 ring-2 ring-red-200' : 'border-gray-200 bg-gray-50 focus:bg-white focus:border-bcg-green focus:ring-2 focus:ring-bcg-light'"
+            />
+            @if (vendor.invalid && vendor.touched) {
+              <p class="mt-1.5 text-xs text-red-600">Vendor is required.</p>
+            }
+          </div>
+        </div>
+
+        <div>
+          <label class="flex items-center text-sm font-semibold text-gray-700 mb-1.5">
+            Type
+            <span class="info-tip" data-tip="The category or function of this AI system (e.g. Fraud Detection, Medical Diagnosis). Under the EU AI Act, the type helps determine which articles and obligations apply to the system.">i</span>
+          </label>
+          <input type="text"
+            [(ngModel)]="tool.type" name="type" required #type="ngModel"
+            placeholder="e.g. Fraud Detection, HR Screening, Medical Diagnosis"
+            class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-900 outline-none transition-all duration-150"
+            [class]="type.invalid && type.touched ? 'border-red-400 bg-red-50 ring-2 ring-red-200' : 'border-gray-200 bg-gray-50 focus:bg-white focus:border-bcg-green focus:ring-2 focus:ring-bcg-light'"
+          />
+          @if (type.invalid && type.touched) {
+            <p class="mt-1.5 text-xs text-red-600">Type is required.</p>
+          }
+        </div>
+
+        <!-- Department -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Department <span class="text-gray-400 font-normal">(optional)</span></label>
+          <select [(ngModel)]="tool.departmentId" name="departmentId"
+                  class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 outline-none focus:bg-white focus:border-bcg-green focus:ring-2 focus:ring-bcg-light transition-all duration-150">
+            <option [ngValue]="null">— No department —</option>
+            @for (dept of departments; track dept.id) {
+              <option [ngValue]="dept.id">{{ dept.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="flex items-center text-sm font-semibold text-gray-700 mb-1.5">
+            Oversight Owner
+            <span class="info-tip" data-tip="The named human supervisor responsible for monitoring this AI system. Required by Article 14 of the EU AI Act for high-risk systems. If no owner is assigned, a +2 penalty is added to your compliance risk score.">i</span>
+          </label>
+          <input type="text"
+            [(ngModel)]="tool.oversightOwner" name="oversightOwner" required #oversightOwner="ngModel"
+            placeholder="e.g. Jane Smith — Compliance Officer"
+            class="w-full px-4 py-2.5 rounded-xl border text-sm text-gray-900 outline-none transition-all duration-150"
+            [class]="oversightOwner.invalid && oversightOwner.touched ? 'border-red-400 bg-red-50 ring-2 ring-red-200' : 'border-gray-200 bg-gray-50 focus:bg-white focus:border-bcg-green focus:ring-2 focus:ring-bcg-light'"
+          />
+          @if (oversightOwner.invalid && oversightOwner.touched) {
+            <p class="mt-1.5 text-xs text-red-600">Oversight owner is required.</p>
+          }
+        </div>
+
+        <div class="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
+          <input type="checkbox"
+            [(ngModel)]="tool.personalData" name="personalData" id="personalData"
+            class="mt-0.5 w-4 h-4 rounded border-gray-300 cursor-pointer"
+            style="accent-color:#00A859;"
+          />
+          <div>
+            <label for="personalData" class="flex items-center text-sm font-semibold text-gray-700 cursor-pointer">
+              Processes Personal Data
+              <span class="info-tip tip-right" data-tip="Check this if the tool processes personal data such as names, ID numbers, biometrics, health records, or location data. This triggers GDPR obligations alongside the EU AI Act and adds +2 to your compliance risk score.">i</span>
+            </label>
+            <p class="text-xs text-gray-400 mt-0.5">GDPR obligations apply — adds +2 to the compliance risk score</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Algorithmic Risk Assessment Card (create only) ── -->
+    @if (!isEdit) {
+      <div class="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100" style="background:linear-gradient(135deg,#1a3a2a 0%,#2d5a40 100%);">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+            <h2 class="text-sm font-semibold text-white">Algorithmic Risk Assessment</h2>
+          </div>
+          <p class="text-xs mt-1" style="color:rgba(255,255,255,0.6);">Answer the three questions to automatically calculate the EU AI Act risk classification</p>
+        </div>
+        <div class="p-6 space-y-4">
+
+          <div class="flex items-start gap-3 p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
+            <input type="checkbox" [(ngModel)]="q1" name="q1" id="q1"
+              class="mt-0.5 w-4 h-4 rounded border-gray-300 cursor-pointer flex-shrink-0"
+              style="accent-color:#00A859;" />
+            <div>
+              <label for="q1" class="flex items-center gap-1.5 text-sm font-semibold text-gray-800 cursor-pointer">
+                Q1 – Critical Sector (Annex III)
+                <span class="info-tip" data-tip="Annex III of the EU AI Act lists critical sectors: healthcare, education, employment, essential services (water, gas, electricity), law enforcement, migration & border control, and administration of justice. AI in these areas is classified as high-risk by default.">i</span>
+              </label>
+              <p class="text-xs text-gray-500 mt-0.5">Does this tool operate in a critical sector listed in Annex III? (healthcare, law enforcement, employment, education, finance)</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
+            <input type="checkbox" [(ngModel)]="q2" name="q2" id="q2"
+              class="mt-0.5 w-4 h-4 rounded border-gray-300 cursor-pointer flex-shrink-0"
+              style="accent-color:#00A859;" />
+            <div>
+              <label for="q2" class="flex items-center gap-1.5 text-sm font-semibold text-gray-800 cursor-pointer">
+                Q2 – Human Interaction / Transparency Obligation (Art. 50)
+                <span class="info-tip" data-tip="Article 50 of the EU AI Act requires transparency when AI systems interact with or evaluate people — e.g. chatbots, CV screening tools, emotion recognition, or credit scoring. Users must be informed they are interacting with AI.">i</span>
+              </label>
+              <p class="text-xs text-gray-500 mt-0.5">Does this tool directly interact with, assess, or profile individuals?</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
+            <input type="checkbox" [(ngModel)]="q3" name="q3" id="q3"
+              class="mt-0.5 w-4 h-4 rounded border-gray-300 cursor-pointer flex-shrink-0"
+              style="accent-color:#00A859;" />
+            <div>
+              <label for="q3" class="flex items-center gap-1.5 text-sm font-semibold text-gray-800 cursor-pointer">
+                Q3 – Fully Automated Decisions with Significant Effects
+                <span class="info-tip" data-tip="Decisions made without meaningful human review — such as auto-rejecting a loan application, automatically flagging someone for law enforcement, or denying access to a public service. Combined with Q1 (critical sector), this results in 'Unacceptable' risk classification under Art. 5.">i</span>
+              </label>
+              <p class="text-xs text-gray-500 mt-0.5">Does this tool make fully automated decisions with significant effects on individuals?</p>
+            </div>
+          </div>
+
+          <!-- EU AI Act Risk Classification Legend -->
+          <div class="pt-2">
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">EU AI Act Risk Classification (Chapter III)</p>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-3 rounded-xl bg-red-50 border border-red-100">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800 mb-1">Unacceptable Risk</span>
+                <p class="text-xs text-red-700">Q1 + Q3 — Prohibited under Art. 5 (e.g. social scoring, real-time biometric surveillance in public spaces)</p>
+              </div>
+              <div class="p-3 rounded-xl bg-orange-50 border border-orange-100">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-800 mb-1">High Risk</span>
+                <p class="text-xs text-orange-700">Q1 only — Annex III categories: employment AI, critical infrastructure, biometrics, education, law enforcement</p>
+              </div>
+              <div class="p-3 rounded-xl bg-yellow-50 border border-yellow-100">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 mb-1">Limited Risk</span>
+                <p class="text-xs text-yellow-700">Q2 only — Art. 50 transparency obligations apply (chatbots, deepfake generators, emotion recognition)</p>
+              </div>
+              <div class="p-3 rounded-xl bg-green-50 border border-green-100">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 mb-1">Minimal Risk</span>
+                <p class="text-xs text-green-700">None — No specific EU AI Act obligations (e.g. spam filters, AI in video games, recommendation engines)</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    }
+
+    <!-- ── Submit ── -->
+    <div class="flex items-center gap-3">
+      <button type="submit"
+              [disabled]="loading"
+              class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white shadow-sm transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+              style="background-color:#00A859;" onmouseover="this.style.backgroundColor='#005C40'" onmouseout="this.style.backgroundColor='#00A859'">
+        @if (loading) {
+          <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          </svg>
+          Saving...
+        } @else {
+          {{ isEdit ? 'Save Changes' : 'Create & Assess Risk' }}
+        }
+      </button>
+      <button type="button" (click)="goBack()"
+              class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition-all duration-150 active:scale-95">
+        Cancel
+      </button>
+    </div>
+
+  </form>
+</div>

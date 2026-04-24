@@ -1,0 +1,143 @@
+<div class="flex h-screen overflow-hidden font-inter">
+
+  <!-- ── Sidebar (only shown in admin view) ─────────────────────────────────── -->
+  @if (isAdmin) {
+    <aside class="fixed inset-y-0 left-0 z-50 w-64 flex flex-col" style="background-color:#005C40;">
+
+      <!-- Brand -->
+      <div class="flex items-center gap-3 px-6 py-5" style="border-bottom:1px solid rgba(255,255,255,0.12);">
+        <div class="flex items-center justify-center w-9 h-9 rounded-xl" style="background-color:#00A859;">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-white font-semibold text-sm leading-tight tracking-wide">AI Act Tracker</div>
+          <div class="text-xs font-medium" style="color:#00A859;">Compliance Platform</div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 px-3 py-5 space-y-0.5 overflow-y-auto">
+        <p class="px-3 mb-2 text-xs font-semibold uppercase tracking-widest" style="color:rgba(255,255,255,0.35);">Admin</p>
+
+        <!-- Dashboard -->
+        <a routerLink="/" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="!bg-white/15 !text-white font-semibold"
+           class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150"
+           style="color:rgba(255,255,255,0.72);">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          Dashboard
+        </a>
+
+        <!-- AI Tools -->
+        <a routerLink="/tools" routerLinkActive="!bg-white/15 !text-white font-semibold"
+           class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150"
+           style="color:rgba(255,255,255,0.72);">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
+              d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/>
+          </svg>
+          AI Tools
+        </a>
+
+        <!-- Departments -->
+        <a routerLink="/departments" routerLinkActive="!bg-white/15 !text-white font-semibold"
+           class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150"
+           style="color:rgba(255,255,255,0.72);">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
+              d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21"/>
+          </svg>
+          Departments
+        </a>
+
+        <!-- Compliance Report -->
+        <a routerLink="/report" routerLinkActive="!bg-white/15 !text-white font-semibold"
+           class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150"
+           style="color:rgba(255,255,255,0.72);">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
+              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Compliance Report
+        </a>
+
+        <!-- Employee Surveys -->
+        <a routerLink="/surveys" routerLinkActive="!bg-white/15 !text-white font-semibold"
+           class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150"
+           style="color:rgba(255,255,255,0.72);">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
+              d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"/>
+          </svg>
+          Employee Surveys
+        </a>
+
+        <!-- Divider + View Toggle -->
+        <div class="pt-4 mt-2" style="border-top:1px solid rgba(255,255,255,0.10);">
+          <button
+            (click)="toggleView()"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 hover:bg-white/10"
+            style="color:rgba(255,255,255,0.60);">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
+                d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
+            </svg>
+            Switch to User View
+          </button>
+        </div>
+      </nav>
+
+      <!-- Sidebar footer -->
+      <div class="px-5 py-4" style="border-top:1px solid rgba(255,255,255,0.10);">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background-color:rgba(255,255,255,0.15);">EU</div>
+          <div>
+            <div class="text-xs font-medium text-white">EU AI Act v1.0</div>
+            <div class="text-xs" style="color:rgba(255,255,255,0.40);">Compliance Tracker</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  }
+
+  <!-- ── Main Area ─────────────────────────────────────────────────────────── -->
+  <div class="flex flex-col flex-1 min-h-screen overflow-y-auto bg-gray-50" [class.ml-64]="isAdmin">
+
+    <!-- Top bar (admin only) -->
+    @if (isAdmin) {
+      <header class="sticky top-0 z-40 flex items-center justify-between px-8 py-3.5 bg-white border-b border-gray-100 shadow-sm">
+        <div class="flex items-center gap-2 text-sm text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span>EU AI Act Compliance Platform</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-medium text-gray-400">Admin View</span>
+          <div class="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
+               style="background-color:#E6F4EE; color:#005C40;">
+            <span class="w-1.5 h-1.5 rounded-full" style="background-color:#00A859;"></span>
+            Live
+          </div>
+        </div>
+      </header>
+    }
+
+    <!-- Page content -->
+    <main class="flex-1">
+      <router-outlet />
+    </main>
+
+    <!-- Footer (admin only) -->
+    @if (isAdmin) {
+      <footer class="px-8 py-4 border-t border-gray-100 bg-white">
+        <p class="text-xs text-gray-400">AI Act Compliance Tracker &mdash; Built for EU AI Act Regulation (EU) 2024/1689</p>
+      </footer>
+    }
+  </div>
+</div>
