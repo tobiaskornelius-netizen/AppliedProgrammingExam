@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SurveyService } from '../../services/survey.service';
@@ -19,15 +19,15 @@ export class QuestionnaireForm implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private surveyService = inject(SurveyService);
+  private cdr = inject(ChangeDetectorRef);
 
   token = '';
   validating = true;
   tokenValid = false;
   tokenError = '';
 
-  // Form state
   selectedDepartment = '';
-  answers: Record<string, string> = {};
+  answers: Record<string, string[]> = {};
   submitting = false;
   submitError = '';
 
@@ -45,7 +45,10 @@ export class QuestionnaireForm implements OnInit {
 
   get isComplete(): boolean {
     if (!this.selectedDepartment) return false;
-    return this.allQuestions.every(q => !!this.answers[q.key]);
+    return this.allQuestions.every(q => {
+      const ans = this.answers[q.key];
+      return ans && ans.length > 0;
+    });
   }
 
   ngOnInit(): void {
@@ -55,18 +58,40 @@ export class QuestionnaireForm implements OnInit {
         this.tokenValid = res.valid;
         this.tokenError = res.reason ?? '';
         this.validating = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.tokenValid = false;
         this.tokenError = 'Could not reach the server. Please try again later.';
         this.validating = false;
+        this.cdr.detectChanges();
       },
     });
   }
 
   onDepartmentChange(): void {
-    // Clear department-specific answer when department changes
-    delete this.answers['q7_dept'];
+    delete this.answers['q10_dept'];
+  }
+
+  getSingleAnswer(key: string): string {
+    return this.answers[key]?.[0] ?? '';
+  }
+
+  setSingleAnswer(key: string, value: string): void {
+    this.answers[key] = [value];
+  }
+
+  isChecked(key: string, value: string): boolean {
+    return this.answers[key]?.includes(value) ?? false;
+  }
+
+  toggleCheckbox(key: string, value: string): void {
+    const current = this.answers[key] ?? [];
+    if (current.includes(value)) {
+      this.answers[key] = current.filter(v => v !== value);
+    } else {
+      this.answers[key] = [...current, value];
+    }
   }
 
   submit(): void {
@@ -81,8 +106,8 @@ export class QuestionnaireForm implements OnInit {
       next: () => {
         this.router.navigate(['/survey', this.token, 'thankyou']);
       },
-      error: () => {
-        this.submitError = 'Submission failed. Please try again.';
+      error: (err) => {
+        this.submitError = err?.error?.error ?? 'Submission failed. Please try again.';
         this.submitting = false;
       },
     });
