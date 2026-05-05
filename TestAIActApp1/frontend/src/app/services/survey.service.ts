@@ -20,7 +20,7 @@ export interface SurveyResults {
 
 export interface SurveySubmitPayload {
   department: string;
-  answers: Record<string, string>;
+  answers: Record<string, string[]>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,7 +28,6 @@ export class SurveyService {
   private http = inject(HttpClient);
   private base = 'http://localhost:5129/api/surveys';
 
-  // Admin
   createToken(label: string, expiresAt?: string): Observable<SurveyToken> {
     return this.http.post<SurveyToken>(`${this.base}/tokens`, { label, expiresAt: expiresAt ?? null });
   }
@@ -45,7 +44,6 @@ export class SurveyService {
     return this.http.get<SurveyResults>(`${this.base}/results`);
   }
 
-  // Public
   validate(token: string): Observable<{ valid: boolean; reason?: string }> {
     return this.http.get<{ valid: boolean; reason?: string }>(`${this.base}/validate/${token}`);
   }

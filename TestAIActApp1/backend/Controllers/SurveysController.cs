@@ -16,7 +16,6 @@ public class SurveysController : ControllerBase
         _db = db;
     }
 
-    // Admin: create a new invite token
     [HttpPost("tokens")]
     public async Task<IActionResult> CreateToken([FromBody] CreateTokenRequest req)
     {
@@ -26,7 +25,9 @@ public class SurveysController : ControllerBase
             Label = req.Label,
             CompanyId = 1,
             CreatedAt = DateTime.UtcNow,
-            ExpiresAt = req.ExpiresAt,
+            ExpiresAt = req.ExpiresAt.HasValue
+                ? DateTime.SpecifyKind(req.ExpiresAt.Value, DateTimeKind.Utc)
+                : null,
             IsActive = true
         };
         _db.SurveyTokens.Add(token);
@@ -34,7 +35,6 @@ public class SurveysController : ControllerBase
         return Ok(token);
     }
 
-    // Admin: list all tokens with response counts
     [HttpGet("tokens")]
     public async Task<IActionResult> GetTokens()
     {
@@ -66,7 +66,6 @@ public class SurveysController : ControllerBase
         return Ok(result);
     }
 
-    // Admin: deactivate a token
     [HttpDelete("tokens/{id}")]
     public async Task<IActionResult> DeactivateToken(int id)
     {
@@ -77,7 +76,6 @@ public class SurveysController : ControllerBase
         return Ok(token);
     }
 
-    // Public: validate token before showing questionnaire
     [HttpGet("validate/{token}")]
     public async Task<IActionResult> ValidateToken(string token)
     {
@@ -93,7 +91,6 @@ public class SurveysController : ControllerBase
         return Ok(new { valid = true });
     }
 
-    // Public: anonymous submission
     [HttpPost("submit/{token}")]
     public async Task<IActionResult> Submit(string token, [FromBody] SurveySubmitRequest req)
     {
@@ -106,6 +103,8 @@ public class SurveysController : ControllerBase
         if (surveyToken.ExpiresAt.HasValue && surveyToken.ExpiresAt.Value < DateTime.UtcNow)
             return BadRequest(new { error = "This survey link has expired." });
 
+        using var transaction = await _db.Database.BeginTransactionAsync();
+
         var response = new SurveyResponse
         {
             SurveyTokenId = surveyToken.Id,
@@ -115,21 +114,24 @@ public class SurveysController : ControllerBase
         _db.SurveyResponses.Add(response);
         await _db.SaveChangesAsync();
 
-        foreach (var answer in req.Answers)
+        foreach (var kvp in req.Answers)
         {
-            _db.SurveyAnswers.Add(new SurveyAnswer
+            foreach (var val in kvp.Value)
             {
-                ResponseId = response.Id,
-                QuestionKey = answer.Key,
-                AnswerValue = answer.Value
-            });
+                _db.SurveyAnswers.Add(new SurveyAnswer
+                {
+                    ResponseId = response.Id,
+                    QuestionKey = kvp.Key,
+                    AnswerValue = val
+                });
+            }
         }
         await _db.SaveChangesAsync();
+        await transaction.CommitAsync();
 
         return Ok(new { success = true });
     }
 
-    // Admin: aggregated results for dashboard
     [HttpGet("results")]
     public async Task<IActionResult> GetResults()
     {
@@ -146,7 +148,6 @@ public class SurveysController : ControllerBase
             .OrderByDescending(x => x.Count)
             .ToListAsync();
 
-        // Per-question answer distributions
         var answerDistributions = await _db.SurveyAnswers
             .Join(_db.SurveyResponses, a => a.ResponseId, r => r.Id, (a, r) => new { a, r })
             .Join(_db.SurveyTokens, x => x.r.SurveyTokenId, t => t.Id, (x, t) => new { x.a, t })
@@ -162,12 +163,7 @@ public class SurveysController : ControllerBase
                 g => g.ToDictionary(x => x.AnswerValue, x => x.Count)
             );
 
-        return Ok(new
-        {
-            totalResponses,
-            byDepartment,
-            answerDistributions = questionMap
-        });
+        return Ok(new { totalResponses, byDepartment, answerDistributions = questionMap });
     }
 }
 
@@ -180,5 +176,5 @@ public class CreateTokenRequest
 public class SurveySubmitRequest
 {
     public string Department { get; set; } = string.Empty;
-    public Dictionary<string, string> Answers { get; set; } = new();
+    public Dictionary<string, List<string>> Answers { get; set; } = new();
 }
