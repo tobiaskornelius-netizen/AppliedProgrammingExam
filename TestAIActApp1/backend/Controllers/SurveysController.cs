@@ -23,7 +23,7 @@ public class SurveysController : ControllerBase
         {
             Token = Guid.NewGuid().ToString(),
             Label = req.Label,
-            CompanyId = 1,
+            CompanyId = Constants.CurrentCompanyId,
             CreatedAt = DateTime.UtcNow,
             ExpiresAt = req.ExpiresAt.HasValue
                 ? DateTime.SpecifyKind(req.ExpiresAt.Value, DateTimeKind.Utc)
@@ -39,7 +39,7 @@ public class SurveysController : ControllerBase
     public async Task<IActionResult> GetTokens()
     {
         var tokens = await _db.SurveyTokens
-            .Where(t => t.CompanyId == 1)
+            .Where(t => t.CompanyId == Constants.CurrentCompanyId)
             .OrderByDescending(t => t.CreatedAt)
             .ToListAsync();
 
@@ -137,12 +137,12 @@ public class SurveysController : ControllerBase
     {
         var totalResponses = await _db.SurveyResponses
             .Join(_db.SurveyTokens, r => r.SurveyTokenId, t => t.Id, (r, t) => new { r, t })
-            .Where(x => x.t.CompanyId == 1)
+            .Where(x => x.t.CompanyId == Constants.CurrentCompanyId)
             .CountAsync();
 
         var byDepartment = await _db.SurveyResponses
             .Join(_db.SurveyTokens, r => r.SurveyTokenId, t => t.Id, (r, t) => new { r, t })
-            .Where(x => x.t.CompanyId == 1)
+            .Where(x => x.t.CompanyId == Constants.CurrentCompanyId)
             .GroupBy(x => x.r.Department)
             .Select(g => new { Department = g.Key, Count = g.Count() })
             .OrderByDescending(x => x.Count)
@@ -151,7 +151,7 @@ public class SurveysController : ControllerBase
         var answerDistributions = await _db.SurveyAnswers
             .Join(_db.SurveyResponses, a => a.ResponseId, r => r.Id, (a, r) => new { a, r })
             .Join(_db.SurveyTokens, x => x.r.SurveyTokenId, t => t.Id, (x, t) => new { x.a, t })
-            .Where(x => x.t.CompanyId == 1)
+            .Where(x => x.t.CompanyId == Constants.CurrentCompanyId)
             .GroupBy(x => new { x.a.QuestionKey, x.a.AnswerValue })
             .Select(g => new { g.Key.QuestionKey, g.Key.AnswerValue, Count = g.Count() })
             .ToListAsync();

@@ -29,9 +29,9 @@ public class AssessmentsController : ControllerBase
         string calculatedRisk;
         if (req.Q1 && req.Q3)
             calculatedRisk = "Unacceptable";
-        else if (req.Q1 && !req.Q3)
+        else if (req.Q1 || req.Q3)
             calculatedRisk = "High";
-        else if (req.Q2 && !req.Q1)
+        else if (req.Q2)
             calculatedRisk = "Limited";
         else
             calculatedRisk = "Low";
