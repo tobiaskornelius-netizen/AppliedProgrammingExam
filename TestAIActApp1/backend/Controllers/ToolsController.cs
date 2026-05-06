@@ -29,16 +29,6 @@ public class ToolsController : ControllerBase
         tool.CompanyId = Constants.CurrentCompanyId;
         _db.AITools.Add(tool);
         await _db.SaveChangesAsync();
-
-        var dataFlow = new DataFlow
-        {
-            ToolId = tool.Id,
-            DataType = tool.Type,
-            PersonalData = tool.PersonalData
-        };
-        _db.DataFlows.Add(dataFlow);
-        await _db.SaveChangesAsync();
-
         return Ok(tool);
     }
 

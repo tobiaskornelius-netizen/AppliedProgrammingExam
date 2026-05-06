@@ -2,6 +2,5 @@ namespace backend;
 
 public static class Constants
 {
-    // Single-tenant exam project — one company, hardcoded.
     public const int CurrentCompanyId = 1;
 }
