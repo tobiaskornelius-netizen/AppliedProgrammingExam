@@ -1,59 +1,31 @@
-# Frontend
+# AI Act Compliance App — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.2.
+Angular 21 frontend for the EU AI Act Compliance application.
+Submitted as part of the Applied Programming exam.
 
-## Development server
+## Tech stack
 
-To start a local development server, run:
+- Angular 21 (standalone components)
+- TypeScript
+- Tailwind CSS
+- Vitest for unit tests
 
-```bash
-ng serve
-```
+## Running locally
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+1. Make sure the backend is running on `localhost:5129`
+2. Install dependencies: `npm install`
+3. Start dev server: `ng serve`
+4. Open `http://localhost:4200`
 
-## Code scaffolding
+## Project structure
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- `src/app/components` — 9 standalone components (admin dashboard, tool list, report, survey management, etc.)
+- `src/app/services` — 7 services wrapping backend endpoints
+- `src/app/config` — questionnaire configuration mapped to EU AI Act articles
+- `src/app/guards` — route guard separating admin and user views
 
-```bash
-ng generate component component-name
-```
+## Known limitations
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- No server-side authentication — the admin/user distinction is enforced client-side only via a route guard. A production version would use JWT bearer tokens.
+- Single-tenant — company id is hardcoded via a backend constant (`Constants.CurrentCompanyId`).
+- Limited unit test coverage — the focus was on EU AI Act domain logic and full-stack integration.
