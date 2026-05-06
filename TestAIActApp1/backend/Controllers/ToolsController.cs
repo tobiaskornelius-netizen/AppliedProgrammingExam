@@ -17,7 +17,7 @@ public class ToolsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var tools = await _db.AITools
-            .Where(t => t.CompanyId == 1)
+            .Where(t => t.CompanyId == Constants.CurrentCompanyId)
             .ToListAsync();
 
         return Ok(tools);
@@ -26,11 +26,10 @@ public class ToolsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] AITool tool)
     {
-        tool.CompanyId = 1;
+        tool.CompanyId = Constants.CurrentCompanyId;
         _db.AITools.Add(tool);
         await _db.SaveChangesAsync();
 
-        // Auto-create DataFlow row
         var dataFlow = new DataFlow
         {
             ToolId = tool.Id,

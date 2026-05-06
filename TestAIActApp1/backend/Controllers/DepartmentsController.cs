@@ -20,7 +20,7 @@ public class DepartmentsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var departments = await _db.Departments
-            .Where(d => d.CompanyId == 1)
+            .Where(d => d.CompanyId == Constants.CurrentCompanyId)
             .OrderBy(d => d.Name)
             .ToListAsync();
         return Ok(departments);
@@ -29,7 +29,7 @@ public class DepartmentsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Department department)
     {
-        department.CompanyId = 1;
+        department.CompanyId = Constants.CurrentCompanyId;
         _db.Departments.Add(department);
         await _db.SaveChangesAsync();
         return Ok(department);

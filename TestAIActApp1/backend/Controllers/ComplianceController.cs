@@ -16,7 +16,7 @@ public class ComplianceController : ControllerBase
     [HttpGet("report")]
     public async Task<IActionResult> GetReport()
     {
-        const int companyId = 1;
+        int companyId = Constants.CurrentCompanyId;
         var company = await _db.Companies.FindAsync(companyId);
         if (company is null) return NotFound();
 
@@ -42,15 +42,6 @@ public class ComplianceController : ControllerBase
             return score;
         });
 
-        var report = new ComplianceReport
-        {
-            CompanyId = companyId,
-            RiskScore = riskScore,
-            CreatedAt = DateTime.UtcNow
-        };
-        _db.ComplianceReports.Add(report);
-        await _db.SaveChangesAsync();
-
         return Ok(new
         {
             companyId,
@@ -65,7 +56,7 @@ public class ComplianceController : ControllerBase
     [HttpGet("dashboard")]
     public async Task<IActionResult> GetDashboard()
     {
-        const int companyId = 1;
+        int companyId = Constants.CurrentCompanyId;
         var company = await _db.Companies.FindAsync(companyId);
         if (company is null) return NotFound();
 
